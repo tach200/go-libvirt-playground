@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed" // needed for go:embed
 	"log"
 	"net"
 	"net/url"
@@ -8,6 +9,9 @@ import (
 
 	libvirt "github.com/digitalocean/go-libvirt"
 )
+
+//go:embed ubuntu-netboot.xml
+var xmlString string
 
 // type instance struct {
 // 	ID        string
@@ -25,13 +29,26 @@ import (
 // }
 
 func main() {
-	client, err := createLibvirtClient()
+	client, err := newLibvirtClient()
 	if err != nil {
 		log.Fatalf("error: couldn't create libvirt client : %s", err.Error())
 	}
 	defer client.Disconnect()
 
-	// client.DomainCreateXML()
+	domain, err := client.DomainDefineXML(xmlString)
+	if err != nil {
+		log.Fatalf("error: couldnt define xml domain : %s", err.Error())
+	}
+
+	// err = client.DomainSetAutostart(domain, 1)
+	// if err != nil {
+	// 	log.Fatal("error: couldnt set auto start : %s", err.Error())
+	// }
+
+	err = client.DomainCreate(domain)
+	if err != nil {
+		log.Fatal("error: couldnt create domain")
+	}
 
 	// client.DomainCreate(libvirt.Domain{
 	// 	Name: "",
@@ -40,11 +57,7 @@ func main() {
 	// })
 }
 
-// func createResource() {
-
-// }
-
-func createLibvirtClient() (*libvirt.Libvirt, error) {
+func newLibvirtClient() (*libvirt.Libvirt, error) {
 	u, err := url.Parse("unix:///var/run/libvirt/libvirt-sock")
 	if err != nil {
 		return nil, err
@@ -55,10 +68,10 @@ func createLibvirtClient() (*libvirt.Libvirt, error) {
 		return nil, err
 	}
 
-	l := libvirt.New(conn)
-	if err := l.Connect(); err != nil {
+	client := libvirt.New(conn)
+	if err := client.Connect(); err != nil {
 		return nil, err
 	}
 
-	return l, nil
+	return client, nil
 }
