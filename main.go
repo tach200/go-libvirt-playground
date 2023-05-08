@@ -47,7 +47,7 @@ func main() {
 
 	err = client.DomainCreate(domain)
 	if err != nil {
-		log.Fatal("error: couldnt create domain")
+		log.Fatalf("error: couldnt create domain : %s", err.Error())
 	}
 
 	// client.DomainCreate(libvirt.Domain{
