@@ -9,20 +9,20 @@ import (
 	libvirt "github.com/digitalocean/go-libvirt"
 )
 
-type instance struct {
-	ID        string
-	Name      string
-	Dir       string
-	RootFS    string
-	VNCPort   int
-	Metadata  map[string]string
-	RAM       int
-	VCPU      int
-	CPUShares int
-	Sockets   int
-	Cores     int
-	Threads   int
-}
+// type instance struct {
+// 	ID        string
+// 	Name      string
+// 	Dir       string
+// 	RootFS    string
+// 	VNCPort   int
+// 	Metadata  map[string]string
+// 	RAM       int
+// 	VCPU      int
+// 	CPUShares int
+// 	Sockets   int
+// 	Cores     int
+// 	Threads   int
+// }
 
 func main() {
 	client, err := createLibvirtClient()
